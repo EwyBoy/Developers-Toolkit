@@ -1,25 +1,25 @@
 modLoader="javafml"
-loaderVersion="[35,)"
+loaderVersion="[36,)"
 license="MIT License"
-issueTrackerURL="https://github.com/EwyBoy/Template-Mod/issues"
+issueTrackerURL="https://github.com/EwyBoy/Developers-Toolkit"
 
 [[mods]]
-modId="template"
+modId="devkit"
 version="${file.jarVersion}"
-displayName="Template"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/Mod-Name"
+displayName="Developer's Toolkit"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/Developers-Toolkit"
 credits=""
 authors="Ewy"
 description=""
 
-[[dependencies.template]]
+[[dependencies.devkit]]
 modId="forge"
 mandatory=true
-versionRange="[35,)"
+versionRange="[36,)"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.template]]
+[[dependencies.devkit]]
 modId="minecraft"
 mandatory=true
 versionRange="[1.16.3, 1.17)"

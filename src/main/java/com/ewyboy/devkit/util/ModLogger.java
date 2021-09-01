@@ -1,13 +1,13 @@
-package com.ewyboy.template.util;
+package com.ewyboy.devkit.util;
 
-import com.ewyboy.template.Template;
+import com.ewyboy.devkit.DevelopersToolkit;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ModLogger {
 
-    private static final Logger logger = LogManager.getLogger(Template.MOD_ID);
+    private static final Logger logger = LogManager.getLogger(DevelopersToolkit.MOD_ID);
 
     public static void debug(String message, Object... params) {
         logger.log(Level.DEBUG, String.format(message, params));
