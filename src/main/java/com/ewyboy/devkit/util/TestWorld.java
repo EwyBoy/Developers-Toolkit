@@ -1,8 +1,11 @@
 package com.ewyboy.devkit.util;
 
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.datafix.codec.DatapackCodec;
+import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
@@ -15,7 +18,7 @@ public class TestWorld {
 
     // TODO Config String here:
     private static final String name = "Test World";
-    private static SimpleRegistry<Dimension> simpleRegistry;
+    private static final SimpleRegistry<Dimension> simpleRegistry = new DefaultedRegistry<>("overworld", Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable());
 
     public static void createTestWorld() {
         WorldSettings worldsettings = new WorldSettings(
@@ -23,7 +26,7 @@ public class TestWorld {
                 GameType.CREATIVE,
                 false,
                 Difficulty.PEACEFUL,
-                false,
+                true,
                 new GameRules(),
                 DatapackCodec.DEFAULT
         );

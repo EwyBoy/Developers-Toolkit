@@ -3,7 +3,7 @@ package com.ewyboy.devkit;
 import com.ewyboy.devkit.client.MainMenuEvent;
 import com.ewyboy.devkit.commands.CommandCenter;
 import com.ewyboy.devkit.config.Settings;
-import com.google.common.eventbus.Subscribe;
+import com.ewyboy.devkit.events.handlers.TooltipEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,6 +44,7 @@ public class DevelopersToolkit {
     @SubscribeEvent
     public void clientRegister(FMLClientSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(new MainMenuEvent());
+        MinecraftForge.EVENT_BUS.register(new TooltipEventHandler());
     }
 
 }

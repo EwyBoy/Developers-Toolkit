@@ -56,6 +56,7 @@ public class LocateStructureAndTeleport {
         }
     }
 
+
     private static void toggleForcedChunks(ServerWorld level, BlockPos structurePos, boolean isForced) {
         BlockPos targetPos = new BlockPos(structurePos.getX(), structurePos.getY(), structurePos.getZ());
         level.setChunkForced(level.getChunk(targetPos).getPos().x, level.getChunk(targetPos).getPos().z, isForced);
