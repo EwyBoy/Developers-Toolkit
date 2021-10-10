@@ -31,6 +31,7 @@ public class DevelopersToolkit {
         Settings.setup();
         MinecraftForge.EVENT_BUS.addListener(this :: registerCommands);
         MessageHandler.init();
+        System.setProperty("java.awt.headless", "false");
     }
 
     //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible

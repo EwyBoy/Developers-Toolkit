@@ -1,6 +1,6 @@
 package com.ewyboy.devkit.network;
 
-import com.ewyboy.devkit.network.messages.MessageCopyName;
+import com.ewyboy.devkit.network.messages.MessageGameInfo;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -18,7 +18,7 @@ public class MessageHandler {
     }
 
     public static void init() {
-        CHANNEL.registerMessage(nextID(), MessageCopyName.class, MessageCopyName :: encode, MessageCopyName :: decode, MessageCopyName :: handle);
+        CHANNEL.registerMessage(nextID(), MessageGameInfo.class, MessageGameInfo :: encode, MessageGameInfo:: decode, MessageGameInfo:: handle);
     }
 
     static {
