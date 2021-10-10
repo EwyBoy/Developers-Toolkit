@@ -1,51 +1,40 @@
-package com.ewyboy.devkit.client;
+package com.ewyboy.devkit.network.messages;
 
-import com.ewyboy.devkit.DevelopersToolkit;
-import com.ewyboy.devkit.network.MessageHandler;
-import com.ewyboy.devkit.network.messages.MessageCopyName;
 import com.ewyboy.devkit.util.ModLogger;
+import com.ewyboy.devkit.util.Toolbox;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import org.lwjgl.glfw.GLFW;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.Objects;
+import java.util.function.Supplier;
 
-public class KeyBindingHandler {
+public class MessageCopyName {
 
-    private static KeyBinding strip;
+    public MessageCopyName() {}
 
-    public KeyBindingHandler() {}
+    public static void encode(MessageCopyName pkt, PacketBuffer buf) {}
 
-    public static void initKeyBinding() {
-        strip = new KeyBinding("Copy to Clipboard", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_C, DevelopersToolkit.MOD_ID);
-        ClientRegistry.registerKeyBinding(strip);
+    public static MessageCopyName decode(PacketBuffer buf) {
+        return new MessageCopyName();
     }
 
-    @SubscribeEvent
-    public static void onKeyInput(KeyInputEvent event) {
-        ModLogger.info("TEST");
-        if(strip.consumeClick()) {
-            ModLogger.info("TEST 1 2 3");
-            //MessageHandler.CHANNEL.sendToServer(new MessageCopyName());
+    public static void handle(MessageCopyName message, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            ServerPlayerEntity player = ctx.get().getSender();
 
             Minecraft instance = Minecraft.getInstance();
-
-            PlayerEntity player = instance.player;
 
             if(instance.hitResult.getType() != RayTraceResult.Type.BLOCK){return;}
 
@@ -67,8 +56,17 @@ public class KeyBindingHandler {
 
             String nameCopy = Objects.requireNonNull(block.getBlock().getRegistryName()).toString();
 
+            player.sendMessage(new StringTextComponent(
+                    nameCopy + " has been copied to clipboard"
+            ), ChatType.GAME_INFO, player.getUUID());
 
-        }
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Clipboard clipboard = toolkit.getSystemClipboard();
+            StringSelection strSel = new StringSelection(nameCopy);
+            clipboard.setContents(strSel, null);
+
+        });
+        ctx.get().setPacketHandled(true);
     }
 
 }

@@ -1,11 +1,14 @@
 package com.ewyboy.devkit;
 
+import com.ewyboy.devkit.client.KeyBindingHandler;
 import com.ewyboy.devkit.client.MainMenuEvent;
 import com.ewyboy.devkit.commands.CommandCenter;
 import com.ewyboy.devkit.config.Settings;
 import com.ewyboy.devkit.events.handlers.TooltipEventHandler;
+import com.ewyboy.devkit.network.MessageHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -27,6 +30,7 @@ public class DevelopersToolkit {
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
         Settings.setup();
         MinecraftForge.EVENT_BUS.addListener(this :: registerCommands);
+        MessageHandler.init();
     }
 
     //Make sure the mod being absent on the other network side does not cause the client to display the server as incompatible
@@ -43,8 +47,10 @@ public class DevelopersToolkit {
 
     @SubscribeEvent
     public void clientRegister(FMLClientSetupEvent event) {
+        KeyBindingHandler.initKeyBinding();
         MinecraftForge.EVENT_BUS.register(new MainMenuEvent());
         MinecraftForge.EVENT_BUS.register(new TooltipEventHandler());
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, KeyBindingHandler :: onKeyInput);
     }
 
 }
