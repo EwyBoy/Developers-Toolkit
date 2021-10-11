@@ -44,13 +44,17 @@ public class KeyBindingHandler {
             double blockY = blockVector.y;
             double blockZ = blockVector.z;
 
+            assert instance.player != null;
+
             double playerX = instance.player.getX();
             double playerY = instance.player.getY();
             double playerZ = instance.player.getZ();
 
-            if(blockX == Math.floor(blockX) && blockX <= playerX){blockX--;}
-            if(blockY == Math.floor(blockY) && blockY <= playerY+1){blockY--;} // +1 on Y to get y from player eyes instead of feet
-            if(blockZ == Math.floor(blockZ) && blockZ <= playerZ){blockZ--;}
+            if(blockX == Math.floor(blockX) && blockX <= playerX)   {blockX--;}
+            if(blockY == Math.floor(blockY) && blockY <= playerY+1) {blockY--;}
+            if(blockZ == Math.floor(blockZ) && blockZ <= playerZ)   {blockZ--;}
+
+            assert instance.level != null;
 
             BlockState block = instance.level.getBlockState(new BlockPos(blockX, blockY, blockZ));
 

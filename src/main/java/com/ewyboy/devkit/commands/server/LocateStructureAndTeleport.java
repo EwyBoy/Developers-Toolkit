@@ -18,6 +18,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class LocateStructureAndTeleport {
     public static LiteralCommandNode<CommandSource> register(CommandDispatcher<CommandSource> source) {
         LiteralArgumentBuilder<CommandSource> literalargumentbuilder = Commands.literal("locate").requires((commandSource) -> commandSource.hasPermission(2));
 
-        for (Structure<?> structureFeature : net.minecraftforge.registries.ForgeRegistries.STRUCTURE_FEATURES) {
+        for (Structure<?> structureFeature : ForgeRegistries.WORLD_TYPES) {
             String name = Objects.requireNonNull(structureFeature.getRegistryName()).toString().replace("minecraft:", "");
             literalargumentbuilder = literalargumentbuilder.then(Commands.literal(name)
                     .executes(ctx -> locate(ctx.getSource(), structureFeature))
