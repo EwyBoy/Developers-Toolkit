@@ -5,28 +5,28 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentUtils;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
 public class LocateFeatureAndTeleport {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.locate.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslatableComponent("commands.locate.failed"));
 
-    public static LiteralCommandNode<CommandSource> register(CommandDispatcher<CommandSource> source) {
-        LiteralArgumentBuilder<CommandSource> literalargumentbuilder = Commands.literal("locateFeature").requires((commandSource) -> commandSource.hasPermission(2));
+    public static LiteralCommandNode<CommandSourceStack> register(CommandDispatcher<CommandSourceStack> source) {
+        LiteralArgumentBuilder<CommandSourceStack> literalargumentbuilder = Commands.literal("locateFeature").requires((commandSource) -> commandSource.hasPermission(2));
 
         for (Feature<?> feature : ForgeRegistries.FEATURES) {
             String name = Objects.requireNonNull(feature.getRegistryName()).toString().replace("minecraft:", "");
@@ -38,7 +38,7 @@ public class LocateFeatureAndTeleport {
         return source.register(literalargumentbuilder);
     }
 
-    private static int locate(CommandSource source, Feature<?> feature) throws CommandSyntaxException {
+    private static int locate(CommandSourceStack source, Feature<?> feature) throws CommandSyntaxException {
         BlockPos playerPos = new BlockPos(source.getPosition());
         //BlockPos structurePos = source.getLevel().findNearestMapFeature(feature, playerPos, 100, false);
 
@@ -61,12 +61,12 @@ public class LocateFeatureAndTeleport {
         return level.getServer().getWorldData().worldGenSettings().generateFeatures() ? null : level.getChunkSource().getGenerator().findNearestMapFeature(level, feature, pos, p_241117_3_, p_241117_4_);
     }*/
 
-    private static void toggleForcedChunks(ServerWorld level, BlockPos structurePos, boolean isForced) {
+    private static void toggleForcedChunks(ServerLevel level, BlockPos structurePos, boolean isForced) {
         BlockPos targetPos = new BlockPos(structurePos.getX(), structurePos.getY(), structurePos.getZ());
         level.setChunkForced(level.getChunk(targetPos).getPos().x, level.getChunk(targetPos).getPos().z, isForced);
     }
 
-    private static int findSurface(ServerWorld level, BlockPos structurePos) {
+    private static int findSurface(ServerLevel level, BlockPos structurePos) {
         int y = structurePos.getY();
         while (!level.canSeeSky(new BlockPos(structurePos.getX(), y, structurePos.getZ()))) {
             y++;
@@ -74,10 +74,10 @@ public class LocateFeatureAndTeleport {
         return y;
     }
 
-    public static int showLocateResult(CommandSource source, String structureName, BlockPos playerPos, BlockPos structurePos, String path) {
-        int result = MathHelper.floor(dist(playerPos.getX(), playerPos.getZ(), structurePos.getX(), structurePos.getZ()));
-        ITextComponent itextcomponent = TextComponentUtils.wrapInSquareBrackets(new TranslationTextComponent("chat.coordinates", structurePos.getX(), "~", structurePos.getZ())).withStyle((style) -> style.withColor(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + structurePos.getX() + " ~ " + structurePos.getZ())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("chat.coordinates.tooltip"))));
-        source.sendSuccess(new TranslationTextComponent(path, structureName, itextcomponent, result), false);
+    public static int showLocateResult(CommandSourceStack source, String structureName, BlockPos playerPos, BlockPos structurePos, String path) {
+        int result = Mth.floor(dist(playerPos.getX(), playerPos.getZ(), structurePos.getX(), structurePos.getZ()));
+        Component itextcomponent = ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("chat.coordinates", structurePos.getX(), "~", structurePos.getZ())).withStyle((style) -> style.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + structurePos.getX() + " ~ " + structurePos.getZ())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("chat.coordinates.tooltip"))));
+        source.sendSuccess(new TranslatableComponent(path, structureName, itextcomponent, result), false);
 
         return result;
     }
@@ -86,7 +86,7 @@ public class LocateFeatureAndTeleport {
         int x = structurePosX - playerPosX;
         int z = structurePosZ - playerPosZ;
 
-        return MathHelper.sqrt((float)(x * x + z * z));
+        return Mth.sqrt((float)(x * x + z * z));
     }
 
 }

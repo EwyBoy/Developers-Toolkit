@@ -7,13 +7,13 @@ import com.ewyboy.devkit.commands.server.LocateStructureAndTeleport;
 import com.ewyboy.devkit.commands.server.LocateBiomeAndTeleport;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 public class CommandCenter {
 
-    public CommandCenter(CommandDispatcher<CommandSource> dispatcher) {
+    public CommandCenter(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-                LiteralArgumentBuilder.<CommandSource> literal(DevelopersToolkit.MOD_ID)
+                LiteralArgumentBuilder.<CommandSourceStack> literal(DevelopersToolkit.MOD_ID)
                         .then(LocateStructureAndTeleport.register(dispatcher))
                         .then(LocateFeatureAndTeleport.register(dispatcher))
                         .then(LocateBlockAndTeleport.register(dispatcher))

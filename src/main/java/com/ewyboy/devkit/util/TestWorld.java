@@ -2,33 +2,38 @@ package com.ewyboy.devkit.util;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.datafix.codec.DatapackCodec;
-import net.minecraft.util.registry.DefaultedRegistry;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.level.DataPackConfig;
+import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.Registry;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
-import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
-import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.storage.LevelStorageSource;
 
 import java.io.IOException;
 import java.util.Random;
+
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.dimension.LevelStem;
 
 public class TestWorld {
 
     // TODO Config String here:
     private static final String name = "Test World";
-    private static final SimpleRegistry<Dimension> simpleRegistry = new DefaultedRegistry<>("overworld", Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable());
+    private static final MappedRegistry<LevelStem> simpleRegistry = new DefaultedRegistry<>("overworld", Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable());
 
     public static void createTestWorld() {
-        WorldSettings worldsettings = new WorldSettings(
+        LevelSettings worldsettings = new LevelSettings(
                 name,
                 GameType.CREATIVE,
                 false,
                 Difficulty.PEACEFUL,
                 true,
                 new GameRules(),
-                DatapackCodec.DEFAULT
+                DataPackConfig.DEFAULT
         );
 
         Random random = new Random();
@@ -36,8 +41,8 @@ public class TestWorld {
         Minecraft.getInstance().createLevel(
                 name,
                 worldsettings,
-                DynamicRegistries.Impl.builtin(),
-                new DimensionGeneratorSettings(random.nextLong(), false, false, simpleRegistry)
+                RegistryAccess.RegistryHolder.builtin(),
+                new WorldGenSettings(random.nextLong(), false, false, simpleRegistry)
         );
     }
 
@@ -52,7 +57,7 @@ public class TestWorld {
 
     // Delete the world
     public static void deleteDevWorld() {
-        SaveFormat saveFormat = Minecraft.getInstance().getLevelSource();
+        LevelStorageSource saveFormat = Minecraft.getInstance().getLevelSource();
         try {
             saveFormat.createAccess(name).deleteLevel();
         } catch (IOException e) {

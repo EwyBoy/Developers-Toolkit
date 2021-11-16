@@ -4,30 +4,29 @@ import com.ewyboy.devkit.DevelopersToolkit;
 import com.ewyboy.devkit.network.MessageHandler;
 import com.ewyboy.devkit.network.messages.MessageGameInfo;
 import com.ewyboy.devkit.util.Toolbox;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
 public class KeyBindingHandler {
 
-    private static KeyBinding copy;
+    private static KeyMapping copy;
 
     public KeyBindingHandler() {}
 
     public static void initKeyBinding() {
-        copy = new KeyBinding("Copy to Clipboard", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_C, DevelopersToolkit.MOD_ID);
+        copy = new KeyMapping("Copy to Clipboard", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, DevelopersToolkit.MOD_ID);
         ClientRegistry.registerKeyBinding(copy);
     }
 
@@ -36,9 +35,9 @@ public class KeyBindingHandler {
         if(copy.consumeClick()) {
             Minecraft instance = Minecraft.getInstance();
 
-            if(instance.hitResult.getType() != RayTraceResult.Type.BLOCK){return;}
+            if(instance.hitResult.getType() != HitResult.Type.BLOCK){return;}
 
-            Vector3d blockVector = instance.hitResult.getLocation();
+            Vec3 blockVector = instance.hitResult.getLocation();
 
             double blockX = blockVector.x;
             double blockY = blockVector.y;

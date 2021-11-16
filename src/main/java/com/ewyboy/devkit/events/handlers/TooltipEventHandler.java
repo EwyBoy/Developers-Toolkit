@@ -3,10 +3,10 @@ package com.ewyboy.devkit.events.handlers;
 import com.ewyboy.devkit.network.MessageHandler;
 import com.ewyboy.devkit.util.ModLogger;
 import com.ewyboy.devkit.util.Toolbox;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,7 +32,7 @@ public class TooltipEventHandler {
         return event.getFlags().isAdvanced();
     }
 
-    private PlayerEntity getPlayer(ItemTooltipEvent event) {
+    private Player getPlayer(ItemTooltipEvent event) {
         return event.getPlayer();
     }
 
@@ -59,7 +59,7 @@ public class TooltipEventHandler {
     @SubscribeEvent
     public void onKeyPress(GuiScreenEvent.KeyboardKeyPressedEvent.Pre event) {
         ModLogger.info(event.getKeyCode() + " :: keycode");
-        if (event.getGui() instanceof CreativeScreen) {
+        if (event.getGui() instanceof CreativeModeInventoryScreen) {
             toggleModifier(event.getKeyCode(), shift, isShiftPressed, false);
             toggleModifier(event.getKeyCode(), ctrl, isCtrlPressed, false);
             toggleModifier(event.getKeyCode(), alt, isAltPressed, false);
@@ -69,7 +69,7 @@ public class TooltipEventHandler {
 
     @SubscribeEvent
     public void onKeyPress(GuiScreenEvent.KeyboardKeyReleasedEvent.Post event) {
-        if (event.getGui() instanceof CreativeScreen) {
+        if (event.getGui() instanceof CreativeModeInventoryScreen) {
             toggleModifier(event.getKeyCode(), shift, isShiftPressed, true);
             toggleModifier(event.getKeyCode(), ctrl, isCtrlPressed, true);
             toggleModifier(event.getKeyCode(), alt, isAltPressed, true);
@@ -82,21 +82,21 @@ public class TooltipEventHandler {
         // TODO Super Advanced Tooltip Info here
 
         if (isShiftPressed) {
-            event.getToolTip().add(new StringTextComponent("Registry Name: " + getItemStack(event).getItem().getRegistryName()));
+            event.getToolTip().add(new TextComponent("Registry Name: " + getItemStack(event).getItem().getRegistryName()));
         }
 
         if (isCtrlPressed) {
-            event.getToolTip().add(new StringTextComponent("Description ID: " + getItemStack(event).getItem().getDescriptionId()));
+            event.getToolTip().add(new TextComponent("Description ID: " + getItemStack(event).getItem().getDescriptionId()));
         }
 
         if (isAltPressed) {
-            event.getToolTip().add(new StringTextComponent("Description: " + getItemStack(event).getItem().getDescription()));
+            event.getToolTip().add(new TextComponent("Description: " + getItemStack(event).getItem().getDescription()));
         }
 
         if (isCPressed) {
             String name = getItemStack(event).getItem().getRegistryName() + "";
             Toolbox.Tools.copyToClipboard(name);
-            Objects.requireNonNull(event.getPlayer()).sendMessage(new StringTextComponent(name + " has been copied to Clipboard"), event.getPlayer().getUUID());
+            Objects.requireNonNull(event.getPlayer()).sendMessage(new TextComponent(name + " has been copied to Clipboard"), event.getPlayer().getUUID());
             isCPressed = false;
         }
 

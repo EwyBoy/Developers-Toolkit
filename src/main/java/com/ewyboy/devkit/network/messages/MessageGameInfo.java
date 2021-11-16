@@ -1,10 +1,10 @@
 package com.ewyboy.devkit.network.messages;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -20,19 +20,19 @@ public class MessageGameInfo {
         return serverInformation;
     }
 
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeUtf(this.serverInformation);
     }
 
-    public static MessageGameInfo decode(PacketBuffer buf) {
+    public static MessageGameInfo decode(FriendlyByteBuf buf) {
         return new MessageGameInfo(buf.readUtf());
     }
 
     public static void handle(MessageGameInfo message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
 
-            player.sendMessage(new StringTextComponent(
+            player.sendMessage(new TextComponent(
                     message.getServerInformation() + " has been copied to clipboard"
             ), ChatType.GAME_INFO, player.getUUID());
 

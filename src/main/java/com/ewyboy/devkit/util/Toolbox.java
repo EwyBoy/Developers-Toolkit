@@ -1,7 +1,7 @@
 package com.ewyboy.devkit.util;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -11,7 +11,7 @@ public class Toolbox {
 
     public static class Position {
 
-        public static BlockPos BlockPosFromVec3d(Vector3d vec3d) {
+        public static BlockPos BlockPosFromVec3d(Vec3 vec3d) {
             return new BlockPos(vec3d.x, vec3d.y, vec3d.z);
         }
 
